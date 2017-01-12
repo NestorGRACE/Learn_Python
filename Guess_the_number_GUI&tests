@@ -1,0 +1,247 @@
+#I took the liberty of adding a couple of modifications 
+#to show the score, make averything a bit more fun I hope
+# input will come from buttons and an input field
+# all output for the game will be printed in the console
+
+import simplegui
+import random
+import math
+
+#First initialization of N
+N=100
+wins,losses=0,0
+
+# helper function to start and restart the game
+def new_game():
+    #all these prints just to make it pretty
+    print
+    print"-----------------------------------------------------------------"
+    print
+    print "This is a new game, please input a value within the given range:"
+    # initialize global variables used in your code here
+    global secret_number,counter,Max,wins,losses
+    #Max fixes the maximum number of tries, counter counts the attemps
+    counter=0
+    Max=int(math.ceil(math.log(N,2)))
+    #the choice of randrange is logical and 100 is not a possible value
+    secret_number=random.randrange(0, N)
+    print "Range is: [0,",N,")."
+    print "You have",Max,"attempts to guess the number."
+
+
+# define event handlers for control panel
+def range100():
+    # button that changes the range to [0,100) and starts a new game 
+    global N,Max
+    N=100
+    Max=int(math.ceil(math.log(N,2)))
+    new_game()
+
+def range1000():
+    # button that changes the range to [0,1000) and starts a new game     
+    global N,Max
+    N=1000
+    #calculates the maximum number of tries
+    Max=int(math.ceil(math.log(N,2)))
+    new_game()
+    
+#Custom Range
+def custom_range(K):
+    # button that changes the range to [0,1000) and starts a new game     
+    global N,Max
+    N=int(K)
+    #calculates the maximum number of tries
+    Max=int(math.ceil(math.log(N,2)))
+    new_game()
+
+    
+def input_guess(guess):
+    #adds a line between tries
+    print
+    # main game logic goes here
+    global counter,wins,losses
+    p=int(guess)
+    print "Guess was",int(guess),"."
+    
+    #increment the try counter
+    counter+=1;
+    difference=Max-counter
+    
+    #If testing to position number in initial zone
+    if difference>=0:
+        
+        if p!=secret_number and difference==0:
+            losses+=1;
+            print "You have exceeded the total number of allowed, you lose !"
+            print "You made",counter,"attempt(s)."
+            print "The number was", secret_number,"."
+            #an additional functionality which is an alternate take 
+            #on original guidelines
+            #print "Press New Game button to start again..."
+            new_game()
+            
+        if p<secret_number and difference!=0:
+            print "Higher, you have",difference,"tries remaining."
+            print "You have made",counter,"attempt(s)."
+            
+        if p>secret_number and difference!=0:
+            print "Lower, you have",difference,"tries remaining."
+            print "You have made",counter,"attempt(s)."
+            
+        elif p==secret_number:
+            #increment the win counter
+            wins+=1;
+            print "Correct, you found the secret number in",counter,"tries."
+            print "You had",difference,"attempt(s) left."
+            #an additional functionality which is an alternate take 
+            #on original guidelines
+            #print "Press New Game button to start again..."
+            new_game()
+    else:
+        #increment the loss counter
+        losses+=1;
+        print "You have exceeded the total number of allowed, you lose !"
+        print "You made",counter,"attempt(s)."
+        print "The number was", secret_number,"."
+        #an additional functionality which is an alternate take 
+        #on original guidelines
+        #print "Press New Game button to start again..."
+        new_game()
+        
+"""I decided to add in some extra score counting and calculating tricks"""
+
+def score():
+    #this event handler returns the score in the form of a string
+    score="Your Score is "+str(wins)+" wins and "+str(losses)+" losses."
+    return score
+
+def reset_score():
+    #this event handler resets the score to 0,0
+    global wins,losses
+    wins=0
+    losses=0
+    new_game()
+
+def canvas_score(canvas):
+    #this event handler draws the score on the screen
+    canvas.draw_text(score(), (20, 20), 12, 'Red')
+    
+# create frame
+f=simplegui.create_frame("",300,300)
+f.add_button("Range 0->100",range100,150)
+f.add_button("Range 0->1000",range1000,150)
+f.add_button("Reset your score",reset_score,150)
+#EXTRA button
+#f.add_button("New Game",new_game,150)
+f.add_input("Enter your Guess:",input_guess, 150)
+#extra input for custom range handling
+f.add_input("Enter your custom Range Maximum",custom_range,150)
+
+#add canvas text drawing
+f.set_draw_handler(canvas_score)
+
+
+
+# register event handlers for control elements and start frame
+f.start()
+
+# call new_game 
+new_game()
+
+
+# always remember to check your completed program against the grading rubric
+###################################################
+# Start our test #1 - assume global variable secret_number
+# is the the "secret number" - change name if necessary
+
+
+secret_number = 74	
+input_guess("50")
+input_guess("75")
+input_guess("62")
+input_guess("68")
+input_guess("71")
+input_guess("73")
+input_guess("74")
+
+###################################################
+range1000()
+secret_number = 375	
+input_guess("500")
+input_guess("250")
+input_guess("375")
+
+###################################################
+# Output from test #2
+#New game. Range is [0,100)
+#Number of remaining guesses is 7
+#
+#New game. Range is [0,1000)
+#Number of remaining guesses is 10
+#
+#Guess was 500
+#Number of remaining guesses is 9
+#Lower!
+#
+#Guess was 250
+#Number of remaining guesses is 8
+#Higher!
+#
+#Guess was 375
+#Number of remaining guesses is 7
+#Correct!
+#
+#New game. Range is [0,1000)
+#Number of remaining guesses is 10
+
+
+
+###################################################
+# Start our test #3 - assume global variable secret_number
+# is the the "secret number" - change name if necessary
+
+range100()
+secret_number = 28	
+input_guess("50")
+input_guess("50")
+input_guess("50")
+input_guess("50")
+input_guess("50")
+input_guess("50")
+input_guess("50")
+
+###################################################
+# Output from test #3
+#New game. Range is [0,100)
+#Number of remaining guesses is 7
+#
+#Guess was 50
+#Number of remaining guesses is 6
+#Lower!
+#
+#Guess was 50
+#Number of remaining guesses is 5
+#Lower!
+#
+#Guess was 50
+#Number of remaining guesses is 4
+#Lower!
+#
+#Guess was 50
+#Number of remaining guesses is 3
+#Lower!
+#
+#Guess was 50
+#Number of remaining guesses is 2
+#Lower!
+#
+#Guess was 50
+#Number of remaining guesses is 1
+#Lower!
+#
+#Guess was 50
+#Number of remaining guesses is 0
+#You ran out of guesses.  The number was 28
+#
+#New game. Range is [0,100)
+#Number of remaining guesses is 7
