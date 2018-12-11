@@ -1,0 +1,67 @@
+def convert_seconds(sec):
+    s=float(sec)
+    m=(s-s%60)/60
+    h=(m-m%60)/60
+    m=m-60*h
+    s=s-3600*h-60*m
+    if (h==1):
+        total=str(int(h))+" hour, "
+    else:
+        total=str(int(h))+" hours, "
+    if (m==1):
+        total=total+str(int(m))+" minute, "
+    else:
+        total=total+str(int(m))+" minutes, "
+    if (s==1):
+        total=total+str(float(s))+" second "
+    else:
+        total=total+str(float(s))+" seconds "
+    return total
+    
+def download_time(size,size_unit,bw,bw_unit):
+    
+    n_size=size #normalized size in kb
+    n_bw=bw #normalized bandwidth in kb (per second)
+    if size_unit==bw_unit:
+        time=size/bw
+        return convert_seconds(time)
+    elif size_unit=="kb":
+        n_size=n_size
+    elif size_unit=="kB":
+        n_size=n_size*8
+    elif size_unit=="Mb":
+        n_size=n_size*2**10
+    elif size_unit=="MB":
+        n_size=n_size*2**10*8
+    elif size_unit=="Gb":
+        n_size=n_size*2**20
+    elif size_unit=="GB":
+        n_size=n_size*2**20*8
+    elif size_unit=="Tb":
+        n_size=n_size*2**30
+    elif size_unit=="TB":
+        n_size=n_size*2**30*8
+    else:
+        return "size unit not recognized"
+    if bw_unit=="kb":
+        time=float(n_size)/float(n_bw)
+        return convert_seconds(time)
+    elif bw_unit=="kB":
+        n_bw=n_bw*8
+    elif bw_unit=="Mb":
+        n_bw=n_bw*2**10
+    elif bw_unit=="MB":
+        n_bw=n_bw*2**10*8
+    elif bw_unit=="Gb":
+        n_bw=n_bw*2**20
+    elif bw_unit=="GB":
+        n_bw=n_bw*2**20*8
+    elif bw_unit=="Tb":
+        n_bw=n_bw*2**30
+    elif bw_unit=="TB":
+        n_bw=n_bw*2**30*8
+    else:
+        return "bandwidth unit not recognized"
+    
+    time=float(n_size)/float(n_bw)
+    return convert_seconds(float(time))
